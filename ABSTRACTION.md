@@ -211,3 +211,4 @@ public class Main {
 - This is not just related to abstraction only but it is related to the way we initialize constructors
 - normally constructors would be initialized like this.constructor = constructor but diving deeper into it the way we initialize a constructor greatly depends on the data type, is it an array, string, int or what.
 - If we initialized an array in our attributes and String[] constructor in the constructor paramters when we will use this.constructor = constructor but we if we initialized a single string like String constructor and then we will use this in our constructor this.constructor = new String[] { constructor };
+- When we are inheriting and want to display info we do:         System.out.println("Name" + getName()); now we gate the name from the getter in the abstract class.
