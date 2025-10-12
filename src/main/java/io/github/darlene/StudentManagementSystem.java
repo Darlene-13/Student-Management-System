@@ -87,6 +87,16 @@ abstract class Person{
                 ", id='" + id + '\'' +
                 '}';
     }
+
+    // Overriding the default .equals() in the case where there might be two students with same parameters but are actually different people
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Person person = (Person) obj;
+        return id.equals(Person.id);
+    }
+
     // Abstract method to be implemented by subclass
     public abstract void displayInfo();
 }
