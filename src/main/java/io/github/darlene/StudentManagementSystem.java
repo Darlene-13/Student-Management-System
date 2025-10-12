@@ -1,5 +1,6 @@
 package io.github.darlene;
 import java.util.*;
+import java.util.UUID;
 
 
 // Making the abstract class public because it is being used across different classes and file// This is a java best praactice.
@@ -29,15 +30,10 @@ abstract class Person{
             throw new IllegalArgumentException("Null Pointer Exception");
         }
 
-
-        // Check for null and spaces in if
-        if(id == null || id.trim().isEmpty()){
-            throw new IllegalArgumentException("Null and Empty Pointer Exception");
-        }
         this.name = name;
         this.age = age;
         this.email = email;
-        this.id = id;
+        this.id = UUID.randomUUID().toString();
     }
 
     // GETTERS AND SETTERS
@@ -77,10 +73,6 @@ abstract class Person{
         }
         this.email = email;
     }
-    public String getId(){
-        return id;
-    }
-
     // Overriding the default toString method this is important to make our output human readable.
     @Override
     public String toString(){
