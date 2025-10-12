@@ -84,8 +84,8 @@ public class Main{
 ```
 
 ##### INTERFACES
-- Interfaces in hava is a blueprint of a class and can be used to achieve 100% abstraction.
-- -It can contain abstract methods and constants but no method bodies except default and static methods.
+- Interfaces in java is a blueprint of a class and can be used to achieve 100% abstraction.
+- It can contain abstract methods and constants but no method bodies except default and static methods.
 - To implement an interface we use the key word (implements) with class while for abstraction we used extends.
 - Interfaces only define behaviour and not the attributes 
 - What is allowed in an interface?
@@ -204,3 +204,10 @@ public class Main {
   - For example we use abstract color() in an animal method class or shape or abstract sound() because each shape has its own color and each animal makes its own sound, this is a unique feature to the implementing classes.
 - We use normal or concrete methods in the abstract class when the method implementation is common to all the subclasses. 
   - For example public abstract eat() in an animals abstract methods, this is because all animals eat in the same way
+
+
+
+##### N/B
+- This is not just related to abstraction only but it is related to the way we initialize constructors
+- normally constructors would be initialized like this.constructor = constructor but diving deeper into it the way we initialize a constructor greatly depends on the data type, is it an array, string, int or what.
+- If we initialized an array in our attributes and String[] constructor in the constructor paramters when we will use this.constructor = constructor but we if we initialized a single string like String constructor and then we will use this in our constructor this.constructor = new String[] { constructor };
