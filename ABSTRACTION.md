@@ -199,3 +199,8 @@ public class Main {
 - It may make debugging more difficult as the actual implementation is hidden
 
 
+##### N/B
+- We use the abstract method in the abstract class when each class implementing it has a unique implementation of the method. 
+  - For example we use abstract color() in an animal method class or shape or abstract sound() because each shape has its own color and each animal makes its own sound, this is a unique feature to the implementing classes.
+- We use normal or concrete methods in the abstract class when the method implementation is common to all the subclasses. 
+  - For example public abstract eat() in an animals abstract methods, this is because all animals eat in the same way
