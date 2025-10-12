@@ -8,13 +8,13 @@ public abstract class Person{
     private String name;  // What if this method is null? or empty? or just spaces?
     private int age;
     private String email;
-    private String id;
+    private final String id = ""; // Make ID final so that it cannot be changes by anyone
 
     // Constructor for the abstract class
     public Person(String name,int age, String email, String ID){
         // this.name = name; this constructor alone will throw a null pointer exception
         //Check if name is null
-        if (name == null){
+        if (name == null ){
             throw new IllegalArgumentException("Null Pointer Exception");
         }
         // Check if name is empty   .trim() is meant to remove extra spaces.
@@ -24,10 +24,41 @@ public abstract class Person{
 
         this.name = name;
 
-
-
+        // this.age = age; we also have to validate age so that no one puts a negatibve age and it should all be above 18 years only.
+        if(age < 0){
+            throw new IllegalArgumentException("Negative Pointer Exception");
+        }
+        if(age < 18){
+            throw new IllegalArgumentException("Age cannot be less 18");
+        }
+        if(age > 80){
+            throw new IllegalArgumentException("Age cannot be over 80");
+        }
         this.age = age;
+
+
+        // this.email = email; the email input should also be validate incase of null pointers and empty spaces.
+        // Check for null and throw new IllegalArgumentException
+        if(email == null){
+            throw new IllegalArgumentException("Null Pointer Exception");
+        }
+        // Check for whitespaces or empty
+        if(email.trim().isEmpty()){
+            throw new IllegalArgumentException("Empty Pointer Exception");
+        }
+        // EMail should contain @
+        if(!email.contains("@")){
+            throw new IllegalArgumentException("Invalid Email Address");
+        }
         this.email = email;
+
+        // Check for null and spaces in if
+        if(id == null){
+            throw new IllegalArgumentException("Null Pointer Exception");
+        }
+        if(id.trim().isEmpty()){
+            throw new IllegalArgumentException("Empty Pointer Exception");
+        }
         this.id = id;
     }
 
@@ -53,6 +84,18 @@ public abstract class Person{
         return age;
     }
     public void setAge(int age){
+
+        // this.age = age; we also have to validate age so that no one puts a negatibve age and it should all be above 18 years only.
+        if(age < 0){
+            throw new IllegalArgumentException("Negative Pointer Exception");
+        }
+        if(age < 18){
+            throw new IllegalArgumentException("Age cannot be less 18");
+        }
+        if(age > 80){
+            throw new IllegalArgumentException("Age cannot be over 80");
+        }
+
         this.age = age;
     }
 
@@ -61,12 +104,35 @@ public abstract class Person{
         return email;
     }
     public void setEmail(String email){
+        // this.email = email; the email input should also be validate incase of null pointers and empty spaces.
+        // Check for null and throw new IllegalArgumentException
+        if(email == null){
+            throw new IllegalArgumentException("Null Pointer Exception");
+        }
+        // Check for whitespaces or empty
+        if(email.trim().isEmpty()){
+            throw new IllegalArgumentException("Empty Pointer Exception");
+        }
+        // EMail should contain @
+        if(!email.contains("@")){
+            throw new IllegalArgumentException("Invalid Email Address");
+        }
+
         this.email = email;
     }
-    public String getID(){
+    public String getId(){
         return id;
     }
-    public void setID(String id){
+    public void setId(String id){
+
+        // Check for null and spaces in if
+        if(id == null){
+            throw new IllegalArgumentException("Null Pointer Exception");
+        }
+        if(id.trim().isEmpty()){
+            throw new IllegalArgumentException("Empty Pointer Exception");
+        }
+
         this.id = id;
     }
 
