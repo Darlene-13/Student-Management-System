@@ -81,6 +81,16 @@ abstract class Person{
         return id;
     }
 
+    // Overriding the default toString method this is important to make our output human readable.
+    @Override
+    public String toString(){
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", email='" + email + '\'' +
+                ", id='" + id + '\'' +
+                '}';
+    }
     // Abstract method to be implemented by subclass
     public abstract void displayInfo();
 }
