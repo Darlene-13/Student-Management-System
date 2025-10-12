@@ -3,143 +3,87 @@ import java.util.*;
 
 
 // Making the abstract class public because it is being used across different classes and file// This is a java best praactice.
-public abstract class Person{
+abstract class Person{
 
     private String name;  // What if this method is null? or empty? or just spaces?
     private int age;
     private String email;
-    private final String id = ""; // Make ID final so that it cannot be changes by anyone
+    private final String id; // Make ID final so that it cannot be changes by anyone
 
     // Constructor for the abstract class
-    public Person(String name,int age, String email, String ID){
+    public Person(String name,int age, String email, String id){
         // this.name = name; this constructor alone will throw a null pointer exception
-        //Check if name is null
-        if (name == null ){
+        //Check if name is null and empty
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Null and Empty Pointer Exception");
+        }
+
+        // this.age = age; we also have to validate age so that no one puts a negative age, and it should all be above 18 years only.
+        if(age < 18 || age > 75){
+            throw new IllegalArgumentException("Invalid age! Should be between 18 and 75");
+        }
+
+        // this.email = email; the email input should also be validated in case of null pointers and empty spaces.
+        // Check for null , spaces and if it does not contain @ and throw new IllegalArgumentException
+        if(email == null || email.trim().isEmpty() || !email.contains("@")) {
             throw new IllegalArgumentException("Null Pointer Exception");
         }
-        // Check if name is empty   .trim() is meant to remove extra spaces.
-        if (name.trim().isEmpty()){
-            throw new IllegalArgumentException("Empty Pointer Exception");
-        }
 
-        this.name = name;
-
-        // this.age = age; we also have to validate age so that no one puts a negatibve age and it should all be above 18 years only.
-        if(age < 0){
-            throw new IllegalArgumentException("Negative Pointer Exception");
-        }
-        if(age < 18){
-            throw new IllegalArgumentException("Age cannot be less 18");
-        }
-        if(age > 80){
-            throw new IllegalArgumentException("Age cannot be over 80");
-        }
-        this.age = age;
-
-
-        // this.email = email; the email input should also be validate incase of null pointers and empty spaces.
-        // Check for null and throw new IllegalArgumentException
-        if(email == null){
-            throw new IllegalArgumentException("Null Pointer Exception");
-        }
-        // Check for whitespaces or empty
-        if(email.trim().isEmpty()){
-            throw new IllegalArgumentException("Empty Pointer Exception");
-        }
-        // EMail should contain @
-        if(!email.contains("@")){
-            throw new IllegalArgumentException("Invalid Email Address");
-        }
-        this.email = email;
 
         // Check for null and spaces in if
-        if(id == null){
-            throw new IllegalArgumentException("Null Pointer Exception");
+        if(id == null || id.trim().isEmpty()){
+            throw new IllegalArgumentException("Null and Empty Pointer Exception");
         }
-        if(id.trim().isEmpty()){
-            throw new IllegalArgumentException("Empty Pointer Exception");
-        }
+        this.name = name;
+        this.age = age;
+        this.email = email;
         this.id = id;
     }
 
-    // Getters and setters
+    // GETTERS AND SETTERS
     public String getName(){
         return name;
     }
     public void setName(String name){
         // Check for null pointer
-        if(name == null){
-            throw new IllegalArgumentException("Null Pointer Exception");
-        }
-        // Check for the presense of white spaces and trims it.
-        if(name.trim().isEmpty()){
-            throw new IllegalArgumentException("Empty Pointer Exception");
+        if(name == null || name.trim().isEmpty()){
+            throw new IllegalArgumentException("Null and Empty Pointer Exception");
         }
         // set the name
         this.name = name;
     }
 
-    // Validate age before accepting age.
     public int getAge(){
         return age;
     }
     public void setAge(int age){
-
+        // Validate age before accepting age.
         // this.age = age; we also have to validate age so that no one puts a negatibve age and it should all be above 18 years only.
-        if(age < 0){
-            throw new IllegalArgumentException("Negative Pointer Exception");
+        if(age < 18 || age > 75){
+            throw new IllegalArgumentException("Age should be between 18 and 75");
         }
-        if(age < 18){
-            throw new IllegalArgumentException("Age cannot be less 18");
-        }
-        if(age > 80){
-            throw new IllegalArgumentException("Age cannot be over 80");
-        }
-
         this.age = age;
     }
 
-    // Validate email too....Prevent crashes: If you later do email.contains("@") and email is null → NullPointerException
     public String getEmail(){
         return email;
     }
     public void setEmail(String email){
+        // Validate email too....Prevent crashes: If you later do email.contains("@") and email is null → NullPointerException
         // this.email = email; the email input should also be validate incase of null pointers and empty spaces.
         // Check for null and throw new IllegalArgumentException
-        if(email == null){
-            throw new IllegalArgumentException("Null Pointer Exception");
+        if(email == null || email.trim().isEmpty() || !email.contains("@")){
+            throw new IllegalArgumentException("Invalid email");
         }
-        // Check for whitespaces or empty
-        if(email.trim().isEmpty()){
-            throw new IllegalArgumentException("Empty Pointer Exception");
-        }
-        // EMail should contain @
-        if(!email.contains("@")){
-            throw new IllegalArgumentException("Invalid Email Address");
-        }
-
         this.email = email;
     }
     public String getId(){
         return id;
     }
-    public void setId(String id){
-
-        // Check for null and spaces in if
-        if(id == null){
-            throw new IllegalArgumentException("Null Pointer Exception");
-        }
-        if(id.trim().isEmpty()){
-            throw new IllegalArgumentException("Empty Pointer Exception");
-        }
-
-        this.id = id;
-    }
 
     // Abstract method to be implemented by subclass
-    abstract void displayInfo();
+    public abstract void displayInfo();
 }
-
 
 
 
