@@ -73,6 +73,10 @@ abstract class Person{
         }
         this.email = email;
     }
+    public String getId(){
+        return id;
+    }
+
     // Overriding the default toString method this is important to make our output human readable.
     @Override
     public String toString(){
