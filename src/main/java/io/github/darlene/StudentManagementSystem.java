@@ -77,7 +77,8 @@ abstract class Person{
         return id;
     }
 
-    // Overriding the default toString method this is important to make our output human readable.
+    // NOTE: LOOOK AT OVERRIDING THE HASHMETHOD.
+    // Overriding the default toString method this is important to make our output human-readable.
     @Override
     public String toString(){
         return "Person{" +
@@ -94,7 +95,7 @@ abstract class Person{
         if (this == obj)return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Person person = (Person) obj;
-        return id.equals(Person.id);
+        return id.equals(person.id);
     }
 
     // Abstract method to be implemented by subclass
@@ -186,8 +187,8 @@ class Student extends Person{
     void displayInfo() {
         System.out.println("Name" + getName());
         System.out.println("Age" + getAge());
-        System.out.println("ID" + getID());
-        System.out.println("ID" + getID());
+        System.out.println("ID" + getId());
+        System.out.println("ID" + getId());
 
     }
 }

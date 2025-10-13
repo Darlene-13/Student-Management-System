@@ -211,4 +211,10 @@ public class Main {
 - This is not just related to abstraction only but it is related to the way we initialize constructors
 - normally constructors would be initialized like this.constructor = constructor but diving deeper into it the way we initialize a constructor greatly depends on the data type, is it an array, string, int or what.
 - If we initialized an array in our attributes and String[] constructor in the constructor paramters when we will use this.constructor = constructor but we if we initialized a single string like String constructor and then we will use this in our constructor this.constructor = new String[] { constructor };
-- When we are inheriting and want to display info we do:         System.out.println("Name" + getName()); now we gate the name from the getter in the abstract class.
+- When we are inheriting and want to display info we do:    
+- System.out.println("Name" + getName()); now we gate the name from the getter in the abstract class.
+
+
+- Always ensure that data integrity is upheld in java like verifying the inpiuts like age, enail, name all this to avoid nullpointerexception issues which is a bigger issue.
+- Try to use: toString()? to avoid useless using of the memory.
+- Every Java class (including your Person) automatically inherits a few methods from the top-level class Object. an example of what is inherited is toString() method...but we need to override it and tailre it to our demands.
