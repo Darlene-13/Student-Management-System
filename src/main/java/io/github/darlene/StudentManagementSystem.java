@@ -241,15 +241,57 @@ class Student extends Person{
 // At enterprice level this could later be changed to something like
 /*
 * class GradingPolicy {
-*   private double
+*   private double aMin, bMin, cMin, dMin;
+*
+*   public GradingPolicy(double aMin, double bMin.............
 *
 *
-*
-*
-*
+*   public Grade getGrade(double.........// Have them getters for the grades
 *
 * }
 * */
+
+/*Grade
+class Grade {
+    private String letter;
+    private double minScore;
+    private double gpaValue;
+
+    // Constructor
+    public Grade(String letter, double minScore, double gpaValue) {
+        this.letter = letter;
+        this.minScore = minScore;
+        this.gpaValue = gpaValue;
+    }
+    // Getters
+    public String getLetter() {return letter;}
+    public double getMinScore() {return minScore;}
+    public double getGpaValue() {return gpaValue;}
+
+    // Method to find grade from score
+    public static Grade findGrade(double score){
+        for(Grade g: GRADE_SCALE){
+            if (score >= g.minScore) return g;
+        }
+        return new Grade ("F", 0, 0);
+    }
+
+    private static final List<Grade> GRADE_SCALE = List.of(
+            new Grade("A", 90, 4.0),
+            new Grade("A-", 85, 3.7),
+            new Grade("B+", 80, 3.3),
+            new Grade("B", 75, 3.0),
+            new Grade("B-", 70, 2.7),
+            new Grade("C+", 65, 2.3),
+            new Grade("C", 60, 2.0),
+            new Grade("D", 50, 1.0),
+            new Grade("A", 0, 0)
+    );
+}
+*/
+
+
+
 enum Grade {
     A(90, 4.0),
     A_MINUS(85, 3.7),
@@ -261,19 +303,25 @@ enum Grade {
     D(55, 1.0),
     F(0,0.0);
 
+    // Declaring the two variables in the grade
     private final double minScore;
     private final double gpaValue;
 
+    // Initializing the variables in the constructor
     Grade(double minScore, double gpaValue){
         this.minScore = minScore;
         this.gpaValue = gpaValue;
     }
 
+    //Getters for the variables
+
     public double getGpaValue(){
         return gpaValue;
     }
+
+    // Method to assign grade..
     public static Grade fromScore(double score){
-        for (Grade g: values()){
+        for (Grade g: values()){  // Looping through grades...
             if (score >= g.minScore) return g;
         }
         return F;
@@ -287,7 +335,6 @@ enum Grade {
 class Lecturer extends Person{
     private double salary;
     private List<Course> courses;
-
 
     // Constructor for the Lecturer class
     public Lecturer(String name,int age,String email, String Id, double salary, List<Course> courses){
