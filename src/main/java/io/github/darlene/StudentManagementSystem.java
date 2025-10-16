@@ -215,7 +215,7 @@ class Student extends Person{
         studentCourseCount--;
     }
 
-    // Method to add grade after lectuer assigns
+    // Method to add grade after lecturer assigns
     public void addGrade(){
 
     }
@@ -336,6 +336,7 @@ class Lecturer extends Person{
     private double salary;
     private List<Course> courses;
 
+
     // Constructor for the Lecturer class
     public Lecturer(String name,int age,String email, String Id, double salary, List<Course> courses){
         super(name, age,email, Id);
@@ -345,7 +346,6 @@ class Lecturer extends Person{
         } else{
             this.courses = new ArrayList<>(courses);
         }
-
     }
 
     // Getters and setters
@@ -366,11 +366,13 @@ class Lecturer extends Person{
         }
     }
 
-    // Method to request to be enrolled to the course
-
-
     // Method to assign Grade
+    public boolean assignGrade(Student student, Grade grade){
+        // Check if the student has the course
 
+        // Assign grade based on the mark.
+        return true;
+    }
 
     // Method to display all info...Overrides the person abstract
     @Override
@@ -388,20 +390,27 @@ class Course {
     private String courseName;
     private String courseCode;
     private Student [] enrolledStudents;
-    private Lecturer lecturer [];
+    private List<Lecturer> lecturer;
     private int studentCount;
+    private static final int LEC_MAX_COURSES = 5;
     private static final int  MAX_STUDENTS = 200;
     private int courseCount;
+    private int lecCourseCount;
 
 
     // Constructors
-    public Course(Student [] enrolledStudents, int studentCount, String courseName, String courseCode, int courseCount ){
+    public Course(Student [] enrolledStudents, int studentCount, String courseName, String courseCode, int courseCount, List<Lecturer> lecturer, int lecCourseCount ){
         this.enrolledStudents = new Student[MAX_STUDENTS];
         this.courseCount = 0;
         this.studentCount = 0;
         this.courseName = courseName;
         this.courseCode = courseName;
-
+        if (lecturer == null){
+            this.lecturer = new ArrayList<>();
+        } else {
+            this.lecturer = new ArrayList<>(lecturer);
+        }
+        this.lecCourseCount = lecCourseCount;
     }
 
     // Getters
@@ -410,6 +419,38 @@ class Course {
     }
     public String getCourseCode(){
         return courseCode;
+    }
+    public List<Lecturer> getLecturer(){
+        return new ArrayList<>(lecturer);
+    }
+
+    public void setLecturer(List<Lecturer> lecturer){
+        if(lecturer == null){
+            this.lecturer = new ArrayList<>();
+        } else{
+            this.lecturer = new ArrayList<>(lecturer);
+        }
+    }
+
+    //Check if we can assign a lecturer any more courses
+    public boolean assignCourse(List<Lecturer> lecturer, Course course){
+        //Check if the course is available
+        if(!CourseManager.isAvailable(course)){
+            System.out.println("Course does not exist");
+        }
+       if(lecCourseCount >= LEC_MAX_COURSES){
+           System.out.println("Cannot tutor this course, course is full!");
+           return false;
+       }
+       for (Lecturer l: lecturer){
+           if(){
+
+           }
+       }
+
+
+
+
     }
 
     //Check if it can enroll student in course
@@ -433,6 +474,9 @@ class Course {
         System.out.println("Student not added successfully!");
         return false;
     }
+
+    //Check if Lecturer teaches this course
+
 
     // Method search course by code
 
@@ -477,8 +521,8 @@ class CourseManager {
     public boolean canEnrollLecturer(Lecturer lecturer){
         // Check for duplicate lecturer ID
         for (int i = 0; i < enrolledLecturers; i++){
-            if(lecturers[i].getid().equals(lecturer.getid())){
-                System.out.println("Lecturer: " + lecturer.getid() + lecturer.getName());
+            if(lecturers[i].getId().equals(lecturer.getId())){
+                System.out.println("Lecturer: " + lecturer.getId() + lecturer.getName());
                 System.out.println("Duplicate lecturer ID cannot enroll the lecturer");
             }
         }
@@ -621,7 +665,7 @@ class CourseManager {
     public boolean searchCourseByLecturerCode(Lecturer lecturer){
         boolean found = false;
         for (int i = 0; i < enrolledLecturers; i++){
-            if(lecturers[i].getID().contains(lecturer.getID())){
+            if(lecturers[i].getId().contains(lecturer.getId())){
                 lecturers[i].displayInfo();
                 System.out.println("--------------------------------------");
                 found = true;
@@ -687,8 +731,8 @@ class University{
     public boolean canEnrollUniStudent(Student student ){
 
         for (int i =0; i< enrolledUniStudents; i++){
-            if(students[i].getID().equals(student.getID())){
-                System.out.println("Student " + student.getID() + student.getName());
+            if(students[i].getId().equals(student.getId())){
+                System.out.println("Student " + student.getId() + student.getName());
                 System.out.println("Duplicate student ID cannot print the student");
             }
         }
@@ -717,8 +761,8 @@ class University{
     public boolean canEnrollLecturer(Lecturer lecturer){
         // Check for duplicate lecturer ID
         for (int i = 0; i < enrolledUniLecturers; i++){
-            if(lecturers[i].getID().equals(lecturer.getID())){
-                System.out.println("Lecturer: " + lecturer.getID() + lecturer.getName());
+            if(lecturers[i].getId().equals(lecturer.getId())){
+                System.out.println("Lecturer: " + lecturer.getId() + lecturer.getName());
                 System.out.println("Duplicate lecturer ID cannot enroll the lecturer");
             }
         }
@@ -760,7 +804,7 @@ class University{
     public boolean searchStudentByID(Student student){
         boolean found = false;
         for (int i = 0; i < enrolledUniStudents; i++){
-            if(students[i].getID().contains(student.getID())){
+            if(students[i].getId().contains(student.getId())){
                 students[i].displayInfo();
                 System.out.println("--------------------------------------");
                 found = true;
