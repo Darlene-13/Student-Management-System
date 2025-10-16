@@ -109,7 +109,7 @@ abstract class Person{
 // STUDENT CLASS
 // ==============================================
 
-
+// Using Arrays.copyOf does not create a new array but references the existing array.
 enum StudentType {
     UNDERGRADUATE,
     GRADUATE,
@@ -119,17 +119,29 @@ enum StudentType {
 class Student extends Person{
 
     private String [] grades;
-    private String [] courses;
+    private List<Course> courses;
     private StudentType studentType;
+    private int studentCourseCount;
     private final static int MAXIMUM_COURSE_ENROLLED = 5;
-    private CourseManager course;
+    private CourseManager manager;
+
 
     // Constructors for the students class
-    public Student(int age, String name, String ID, String email, String [] grades, String[] courses, StudentType studentType){
-        super( name, age, email, ID);
-        this.grades = grades;
-        this.courses = courses;
+    public Student(String name, int age, String email, String id, String [] grades, List<Course> courses, StudentType studentType, int studentCourseCount){
+        super( name, age, email, id);
+        // Prevent null pointer in grades by initializing empty arrays,using new String[0] initializes an empty array
+        this.grades = (grades == null) ? new String[0] : Arrays.copyOf(grades, grades.length);
+        if (courses == null){
+            this.courses = new ArrayList<>();
+        } else {
+            this.courses = new ArrayList<>(courses);
+        }
+
+        if (studentType == null){
+            throw new IllegalArgumentException("Student type cannot be null");
+        }
         this.studentType = studentType;
+        this.studentCourseCount = studentCourseCount;
     }
 
     // Getters and setters
@@ -137,76 +149,155 @@ class Student extends Person{
         return grades;
     }
     public void setGrades(String[] grades){
-        this.grades = grades;
+        if (grades == null){
+            this.grades = new String[0];
+        } else {
+            this.grades = Arrays.copyOf(grades, grades.length);
+        }
     }
-    public String [] getCourses(){
-        return courses;
+    public List<Course> getCourses(){
+        return new ArrayList<>(courses); // return a copy
     }
-    public void setCourses(String[] courses){
-        this.courses = courses;
+    public void setCourses(List<Course> courses){
+        if (courses == null) {
+            this.courses = new ArrayList<>();
+        } else {
+            this.courses = new ArrayList<>(courses);
+        }
     }
     public StudentType getStudentType(){
         return studentType;
     }
     public void setStudentType(StudentType studentType){
+        if (studentType == null){
+            throw new IllegalArgumentException("Student type cannot be null");
+        }
         this.studentType = studentType;
     }
 
-
     // Method to enroll in a course
-    public boolean requestEnrollCourse(CourseManager course){
+    public boolean requestEnrollCourse(Course course){
         // Checks if the course is available using the isAvailable method in CourseManager
-        if(CourseManager.isAvailable(course)){
+        if(!CourseManager.isAvailable(course)){
             System.out.println("Course does not exist");
             return false;
         }
-        // Check if their course limit is full
-        if (CourseManager){
+        return true;
+    }
 
+    // Method to add course
+    public void addCourse(Course course){
+        if(courses.size() >= MAXIMUM_COURSE_ENROLLED){
+            System.out.println("Course limit reached");
+            return;
         }
+         if (courses.contains(course)){
+             System.out.println("You have already enrolled in this course");
+             return;
+         }
 
+         courses.add(course);
+         studentCourseCount++;
 
-
-        return true;
     }
 
-    // Method to request to drop a course
-
-    public boolean dropCourse(){
-
-        return true;
+    // Method to remove a course or drop a course
+    public void removeCourse(Course course){
+        if (courses.isEmpty()){
+            System.out.println("You have not enrolled in any courses");
+            return;
+        }
+        if (!courses.contains(course)){   // this is the correct syntax and not course.equals(course.getCourseName or code...
+            System.out.println("You are not enrolled in this course");
+            return;
+        }
+        courses.remove(course);
+        studentCourseCount--;
     }
 
-    // Method to add Grade
+    // Method to add grade after lectuer assigns
+    public void addGrade(){
 
-
+    }
     // Method to calculate GPA
+    public String calculateGPA(){
 
+
+        return "";
+    }
 
     @Override
-    void displayInfo() {
+    public void displayInfo() {
         System.out.println("Name" + getName());
         System.out.println("Age" + getAge());
         System.out.println("ID" + getId());
         System.out.println("ID" + getId());
+        System.out.println("Courses Enrolled" + courses);
 
     }
 }
+
+
+// At enterprice level this could later be changed to something like
+/*
+* class GradingPolicy {
+*   private double
+*
+*
+*
+*
+*
+*
+* }
+* */
+enum Grade {
+    A(90, 4.0),
+    A_MINUS(85, 3.7),
+    B_PLUS(80, 3.3),
+    B(75, 3.0),
+    B_MINUS(70, 2.7),
+    C_PLUS(65, 2.3),
+    C(60, 2.0),
+    D(55, 1.0),
+    F(0,0.0);
+
+    private final double minScore;
+    private final double gpaValue;
+
+    Grade(double minScore, double gpaValue){
+        this.minScore = minScore;
+        this.gpaValue = gpaValue;
+    }
+
+    public double getGpaValue(){
+        return gpaValue;
+    }
+    public static Grade fromScore(double score){
+        for (Grade g: values()){
+            if (score >= g.minScore) return g;
+        }
+        return F;
+    }
+}
+
 
 // ==============================================
 // LECTURER (TEACHER) CLASS
 // ==============================================
 class Lecturer extends Person{
-
     private double salary;
-    private String [] courses;
+    private List<Course> courses;
 
 
     // Constructor for the Lecturer class
-    public Lecturer(int age, String name, String email, String ID, double salary, String [] courses){
-        super(name, age,email, ID);
+    public Lecturer(String name,int age,String email, String Id, double salary, List<Course> courses){
+        super(name, age,email, Id);
         this.salary = salary;
-        this.courses = courses;
+        if (courses == null){
+            this.courses = new ArrayList<>();
+        } else{
+            this.courses = new ArrayList<>(courses);
+        }
 
     }
 
@@ -217,11 +308,15 @@ class Lecturer extends Person{
     public void setSalary(){
         this.salary = salary;
     }
-    public String [] getCourses(){
-        return courses;
+    public List<Course> getCourses(){
+        return new ArrayList<>(courses);
     }
-    public void setCourses(String[] courses){
-        this.courses = courses;
+    public void setCourses(List<Course> courses){
+        if (courses == null){
+            this.courses = new ArrayList<>();
+        } else {
+            this.courses = new ArrayList<>(courses);
+        }
     }
 
     // Method to request to be enrolled to the course
@@ -232,11 +327,11 @@ class Lecturer extends Person{
 
     // Method to display all info...Overrides the person abstract
     @Override
-    void displayInfo(){
+    public void displayInfo(){
         System.out.println("Name" + getName());
         System.out.println("Age" + getAge());
-        System.out.println("ID" + getID());
-        System.out.println("ID" + getID());
+        System.out.println("ID" + getId());
+        System.out.println("ID" + getId());
     }
 }
 
@@ -253,12 +348,13 @@ class Course {
 
 
     // Constructors
-    public Course(Student [] enrolledStudents, int studentCount, String courseName, String courseCode, int courseCount){
+    public Course(Student [] enrolledStudents, int studentCount, String courseName, String courseCode, int courseCount ){
         this.enrolledStudents = new Student[MAX_STUDENTS];
         this.courseCount = 0;
         this.studentCount = 0;
         this.courseName = courseName;
         this.courseCode = courseName;
+
     }
 
     // Getters
@@ -292,6 +388,8 @@ class Course {
     }
 
     // Method search course by code
+
+
 
 
     public void displayInfo(){
@@ -332,8 +430,8 @@ class CourseManager {
     public boolean canEnrollLecturer(Lecturer lecturer){
         // Check for duplicate lecturer ID
         for (int i = 0; i < enrolledLecturers; i++){
-            if(lecturers[i].getID().equals(lecturer.getID())){
-                System.out.println("Lecturer: " + lecturer.getID() + lecturer.getName());
+            if(lecturers[i].getid().equals(lecturer.getid())){
+                System.out.println("Lecturer: " + lecturer.getid() + lecturer.getName());
                 System.out.println("Duplicate lecturer ID cannot enroll the lecturer");
             }
         }
