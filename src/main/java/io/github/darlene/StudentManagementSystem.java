@@ -3,7 +3,7 @@ import java.util.*;
 import java.util.UUID;
 
 
-// Making the abstract class public because it is being used across different classes and file// This is a java best praactice.
+// Making the abstract class public because it is being used across different classes and file// This is a java best practice.
 abstract class Person{
 
     private String name;  // What if this method is null? or empty? or just spaces?
@@ -54,7 +54,7 @@ abstract class Person{
     }
     public void setAge(int age){
         // Validate age before accepting age.
-        // this.age = age; we also have to validate age so that no one puts a negatibve age and it should all be above 18 years only.
+        // this.age = age; we also have to validate age so that no one puts a negative age, and it should all be above 18 years only.
         if(age < 18 || age > 75){
             throw new IllegalArgumentException("Age should be between 18 and 75");
         }
@@ -66,7 +66,7 @@ abstract class Person{
     }
     public void setEmail(String email){
         // Validate email too....Prevent crashes: If you later do email.contains("@") and email is null → NullPointerException
-        // this.email = email; the email input should also be validate incase of null pointers and empty spaces.
+        // this.email = email; the email input should also be validated in case of null pointers and empty spaces.
         // Check for null and throw new IllegalArgumentException
         if(email == null || email.trim().isEmpty() || !email.contains("@")){
             throw new IllegalArgumentException("Invalid email");
@@ -77,7 +77,7 @@ abstract class Person{
         return id;
     }
 
-    // NOTE: LOOOK AT OVERRIDING THE HASHMETHOD.
+    // NOTE: LOOK AT OVERRIDING THE HASH METHOD.
     // Overriding the default toString method this is important to make our output human-readable.
     @Override
     public String toString(){
@@ -183,10 +183,11 @@ class Student extends Person{
             System.out.println("Course does not exist");
             return false;
         }
-        if (course.canEnrollStudent(this)){ // Changed from Course.can enroll to course.can enroll meaning every course should have its own limit
-            System.out.println("Student can be enrolled!"); // Grants the student permission to enroll....from the course....
-            return true;
+        if (!course.canEnrollStudent(this)){ // Changed from Course.can enroll to course.can enroll meaning every course should have its own limit
+            System.out.println("Course is full or student is already enrolled"); // Grants the student permission to enroll....from the course....
+            return false;
         }
+        System.out.println("Request Approved. You can enroll in "+ course.getCourseName());
         return true;
     }
 
@@ -202,6 +203,7 @@ class Student extends Person{
          }
          courses.add(course);
          studentCourseCount++;
+         System.out.println("Added course to the course list");
 
     }
 
@@ -383,7 +385,7 @@ class Lecturer extends Person{
         return true;
     }
 
-    // Method to ask to be assigned a course to teach
+    // Method to ask to be assigned a course to teach and assigning them,,,,,can be adjusted though as in separated like we did in students.
     public boolean canTeachCourse(Course course){
         // Check if they have reached their course limit
         if(courseCount == COURSES_LIMIT){
@@ -399,16 +401,18 @@ class Lecturer extends Person{
         }
         // Check if the course is available
         if(!CourseManager.isAvailable(course)){
-            System.out.println("Course not available");
+            System.out.println("Course not available in the System.");
+            return false;
         }
 
-        if (course.canEnrollLecturer(this)){  // Passed "this" parameter since it needs to check the lecturer parameter which is actually the current class the this class.s
-            System.out.println("Lecturer can enroll lecturer");
+        if (!course.canEnrollLecturer(this)){  // Passed "this" parameter since it needs to check the lecturer parameter which is actually the current class the class.s
+            System.out.println("Lecturer cannot be assigned to this course.");
+            return false;
         }
-        System.out.println("Lecturer can enroll lecturer");
         // Add courses to their list
         courses.add(course);
         courseCount++;
+        System.out.println("Lecturer successfully assigned to " + course.getCourseName());
         return true;
     }
     // Method to set the desired salary
@@ -495,7 +499,7 @@ class Course {
 
     //Check if it can enroll lecturer
     public boolean canEnrollLecturer(Lecturer lecturer){
-        if(lecturers.size() >= maxStudents){
+        if(lecturers.size() >= maxLecturers){
             System.out.println("Course is full, can't add more students");
             return false;
         }
@@ -595,8 +599,9 @@ class CourseManager {
 
     // Method to add a course
     public boolean addCourse(Course course){
-        if (isAvailable(course) && canEnrollCourse(course)){
+        if (isAvailable(course) || !canEnrollCourse(course)){
             System.out.println("Can not add a course");
+            return false;
         }
 
         System.out.println("Enrolling the new course to our system.............");
