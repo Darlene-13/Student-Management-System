@@ -481,7 +481,19 @@ class Course {
         }
     }
 
+    // Fixing the overriding .equals() and hashCode() methods here because isAvailable depends on equals() from course which is not over-ridden so two distinct courses with same courseCode will pass as different
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(!(o instanceof Course)) return false;
+        Course c = (Course) o;
+        return courseCode.equals(c.getCourseCode());
+    }
 
+    @Override
+    public int hashCode(){
+        return Objects.hash(courseCode);
+    }
     //Check if it can enroll student in course
     public boolean canEnrollStudent(Student student){
         if(enrolledStudents.size() >= maxStudents){
@@ -497,6 +509,13 @@ class Course {
         return true;
     }
 
+    // Enroll the student
+    public void addStudent(Student student){
+        if(canEnrollStudent(student)){
+            enrolledStudents.add(student);
+        }
+    }
+
     //Check if it can enroll lecturer
     public boolean canEnrollLecturer(Lecturer lecturer){
         if(lecturers.size() >= maxLecturers){
@@ -505,9 +524,17 @@ class Course {
         }
         if(lecturers.contains(lecturer)){
             System.out.println("Lecturer already enrolled");
+            return false;
         }
         System.out.println("Can enroll Lecturer");
         return true;
+    }
+
+    // Enroll lecturer
+    public void addLecturer(Lecturer lecturer){
+        if(canEnrollLecturer(lecturer)){
+            lecturers.add(lecturer);
+        }
     }
 
     // Method to filter a course by lecturer's name
