@@ -182,6 +182,12 @@ class Student extends Person{
             System.out.println("Course does not exist");
             return false;
         }
+        if (Course.canEnrollStudent()){
+            System.out.println("Student added successfully!");
+            return true;
+        }
+        System.out.println("Student not added successfully!");
+
         return true;
     }
 
@@ -195,7 +201,6 @@ class Student extends Person{
              System.out.println("You have already enrolled in this course");
              return;
          }
-
          courses.add(course);
          studentCourseCount++;
 
@@ -314,7 +319,6 @@ enum Grade {
     }
 
     //Getters for the variables
-
     public double getGpaValue(){
         return gpaValue;
     }
@@ -329,16 +333,20 @@ enum Grade {
 }
 
 
+
+// This class has lecturers who own the lessons or courses they teach.
 // ==============================================
 // LECTURER (TEACHER) CLASS
 // ==============================================
 class Lecturer extends Person{
     private double salary;
     private List<Course> courses;
+    private int COURSES_LIMIT = 5;
+    private int courseCount;
 
 
     // Constructor for the Lecturer class
-    public Lecturer(String name,int age,String email, String Id, double salary, List<Course> courses){
+    public Lecturer(String name,int age,String email, String Id, double salary, List<Course> courses, int COURSES_LIMIT, int courseCount){
         super(name, age,email, Id);
         this.salary = salary;
         if (courses == null){
@@ -346,6 +354,8 @@ class Lecturer extends Person{
         } else{
             this.courses = new ArrayList<>(courses);
         }
+        this.COURSES_LIMIT = COURSES_LIMIT;
+        this.courseCount = courseCount;
     }
 
     // Getters and setters
@@ -374,6 +384,35 @@ class Lecturer extends Person{
         return true;
     }
 
+    // Method to ask to be assigned a course to teach
+    public boolean canTeachCourse(Course course){
+        // Check if they have reached their course limit
+        if(courseCount == COURSES_LIMIT){
+            System.out.println("Courses Limit per lecturer reached!");
+            return false;
+        }
+        // Check if they have a duplicate course
+        for (int i=0; i<courseCount; i++){
+            if(courses.get(i).getCourseCode().equals(course.getCourseCode())){
+                System.out.println("Duplicate course found.");
+                return false;
+            }
+        }
+        // Check if the course is available
+        if(!CourseManager.isAvailable(course)){
+            System.out.println("Course not available");
+        }
+
+        if (Course.canEnrollLecturer()){
+            System.out.println("Lecturer can enroll lecturer");
+        }
+        System.out.println("Lecturer can enroll lecturer");
+        // Add courses to their list
+        courses.add(course);
+        courseCount++;
+        return true;
+    }
+
     // Method to display all info...Overrides the person abstract
     @Override
     public void displayInfo(){
@@ -385,32 +424,36 @@ class Lecturer extends Person{
 }
 
 
-
+// This class own the teaches who teaches the various courses..
+// This class has students list so that we can know the maximum that shouldn't exceed a course.
 class Course {
     private String courseName;
     private String courseCode;
-    private Student [] enrolledStudents;
-    private List<Lecturer> lecturer;
-    private int studentCount;
-    private static final int LEC_MAX_COURSES = 5;
+    private List<Student> enrolledStudents;
+    private List<Lecturer> lecturers; // Plural since it carries more than 1 lecturer.
+    private static int studentCount;
+    private static int lecturerCount;
+    private static final int MAX_LECTURER_PER_COURSE = 5;
     private static final int  MAX_STUDENTS = 200;
-    private int courseCount;
-    private int lecCourseCount;
+    // private int courseCount;   Removing this because it does not make sense inside one course object.
 
 
     // Constructors
-    public Course(Student [] enrolledStudents, int studentCount, String courseName, String courseCode, int courseCount, List<Lecturer> lecturer, int lecCourseCount ){
-        this.enrolledStudents = new Student[MAX_STUDENTS];
-        this.courseCount = 0;
-        this.studentCount = 0;
-        this.courseName = courseName;
-        this.courseCode = courseName;
-        if (lecturer == null){
-            this.lecturer = new ArrayList<>();
-        } else {
-            this.lecturer = new ArrayList<>(lecturer);
+    public Course(List<Student> enrolledStudents, int studentCount, String courseName, String courseCode, List<Lecturer> lecturer, int lecturerCount ){
+        if (enrolledStudents == null){
+            this.enrolledStudents = new ArrayList<>();
+        } else{
+            this.enrolledStudents = new ArrayList<>(enrolledStudents);
         }
-        this.lecCourseCount = lecCourseCount;
+        Course.studentCount = 0;
+        this.courseName = courseName;
+        this.courseCode = courseCode;
+        if (lecturer == null){
+            this.lecturers = new ArrayList<>();
+        } else {
+            this.lecturers = new ArrayList<>(lecturer);
+        }
+        Course.lecturerCount = 0;
     }
 
     // Getters
@@ -421,40 +464,20 @@ class Course {
         return courseCode;
     }
     public List<Lecturer> getLecturer(){
-        return new ArrayList<>(lecturer);
+        return new ArrayList<>(lecturers);
     }
 
     public void setLecturer(List<Lecturer> lecturer){
         if(lecturer == null){
-            this.lecturer = new ArrayList<>();
+            this.lecturers = new ArrayList<>();
         } else{
-            this.lecturer = new ArrayList<>(lecturer);
+            this.lecturers = new ArrayList<>(lecturer);
         }
     }
 
-    //Check if we can assign a lecturer any more courses
-    public boolean assignCourse(List<Lecturer> lecturer, Course course){
-        //Check if the course is available
-        if(!CourseManager.isAvailable(course)){
-            System.out.println("Course does not exist");
-        }
-       if(lecCourseCount >= LEC_MAX_COURSES){
-           System.out.println("Cannot tutor this course, course is full!");
-           return false;
-       }
-       for (Lecturer l: lecturer){
-           if(){
-
-           }
-       }
-
-
-
-
-    }
 
     //Check if it can enroll student in course
-    public boolean canEnrollStudent(){
+    public static boolean canEnrollStudent(){
         if(studentCount == MAX_STUDENTS){
             System.out.println("Course is full, can't add more students");
             return false;
@@ -463,24 +486,48 @@ class Course {
         return true;
     }
 
-    // can add student in course
-    public boolean canAddStudent(Student student){
-        if (canEnrollStudent()){
-            enrolledStudents[studentCount] = student;
-            studentCount++;
-            System.out.println("Student added successfully!");
-            return true;
+    //Check if it can enroll lecturer
+    public static boolean canEnrollLecturer(){
+        if(lecturerCount == MAX_LECTURER_PER_COURSE){
+            System.out.println("Course is full, can't add more students");
+            return false;
         }
-        System.out.println("Student not added successfully!");
+        System.out.println("Can enroll Lecturer");
+        return true;
+    }
+
+    // Method to filter a course by lecturer's name
+    public boolean searchCourseByLecturerName(Lecturer lecturer){
+        boolean found = false;
+        for (int i = 0; i < lecturerCount; i++){
+            if(lecturers.get(i).getName().contains(lecturer.getName())){
+                lecturers.get(i).displayInfo();
+                System.out.println("--------------------------------------");
+                found = true;
+            }
+        }
+        if (!found){
+            System.out.println("Lecturer: "+  lecturer.getName() + " not found");
+        }
         return false;
     }
 
-    //Check if Lecturer teaches this course
+    // Method to filter by lecturer's ID
+    public boolean searchCourseByLecturerCode(Lecturer lecturer){
+        boolean found = false;
+        for (int i = 0; i < lecturerCount; i++){
+            if(lecturers.get(i).getId().contains(lecturer.getId())){
+                lecturers.get(i).displayInfo();
+                System.out.println("--------------------------------------");
+                found = true;
+            }
+        }
 
-
-    // Method search course by code
-
-
+        if (!found){
+            System.out.println("Lecturer " + lecturer.getName()  + " not found");
+        }
+        return false;
+    }
 
 
     public void displayInfo(){
@@ -491,7 +538,6 @@ class Course {
         System.out.println("Number of students enrolled: " + studentCount);
 
     }
-
 }
 
 
@@ -499,63 +545,23 @@ class Course {
 // COURSE MANAGER CLASS
 // ==============================================
 
-
+// Only manages anything to do with the course, not the student not the lecturer
 class CourseManager {
-    private Lecturer lecturers [];
-    private static Course courses [];
-    private int  enrolledLecturers;
+    private static final List<Course> courses = new ArrayList<>();
     private static int enrolledCourses;
-    private static final int MAX_LECTURERS = 10;
     public static final int MAX_COURSES = 50;
     private boolean isAvailable;
 
     // Constructors for the course class
-    public CourseManager (int enrolledCourses, int enrolledLecturers, boolean isAvailable){
-        this.enrolledCourses = 0;
-        this.enrolledLecturers = 0;
+    public CourseManager (int enrolledCourses, boolean isAvailable){
+        CourseManager.enrolledCourses = 0;
         this.isAvailable = false;
-
-    }
-
-    // check for duplicate and if is space to add more lecturers
-    public boolean canEnrollLecturer(Lecturer lecturer){
-        // Check for duplicate lecturer ID
-        for (int i = 0; i < enrolledLecturers; i++){
-            if(lecturers[i].getId().equals(lecturer.getId())){
-                System.out.println("Lecturer: " + lecturer.getId() + lecturer.getName());
-                System.out.println("Duplicate lecturer ID cannot enroll the lecturer");
-            }
-        }
-
-        if (enrolledLecturers == MAX_LECTURERS){
-            System.out.println("Course is full, can't add more lecturers");
-        }
-        System.out.println("Can enroll lecturer");
-        return true;
-    }
-
-    // Add a lecture
-    public void AddLecture(Lecturer lecturer){
-        if(canEnrollLecturer(lecturer)){
-            lecturers[enrolledLecturers] = lecturer;
-            enrolledLecturers++;
-            System.out.println("Lecturer enrolled successfully!");
-        }
-        System.out.println("Lecturer not enrolled.");
 
     }
 
     // Check if the course is available
     public static boolean isAvailable(Course course){
-        // Check for duplicate course code
-        for (int i = 0; i < enrolledCourses; i++){
-            if(courses[i].getCourseCode().equals(course.getCourseCode())){
-                System.out.println("Course: " + course.getCourseName() + course.getCourseCode());
-                System.out.println("Duplicate Course code cannot enroll the course");
-                return true;
-            }
-        }
-        return false;
+        return courses.contains(course);
     }
 
     // Check if there is space to enroll a course
@@ -567,17 +573,16 @@ class CourseManager {
         System.out.println("Can enroll a new course");
         return true;
     }
-// CHECK HERE TO SEE WHICH ONE WEIGHS MORE && OR || THE CONDITION IS SUPPOSED TO BE IS THE COURSE IS AVAILABLE AND THERE IS SPACE OR NO SPACE DO NOT ADD...
-
+    // CHECK HERE TO SEE WHICH ONE WEIGHS MORE && OR || THE CONDITION IS SUPPOSED TO BE IS THE COURSE IS AVAILABLE AND THERE IS SPACE OR NO SPACE DO NOT ADD...
 
     // Method to add a course
     public boolean addCourse(Course course){
-        if (isAvailable(course) || canEnrollCourse(course)){
+        if (isAvailable(course) && canEnrollCourse(course)){
             System.out.println("Can not add a course");
         }
 
         System.out.println("Enrolling the new course to our system.............");
-        courses[enrolledCourses] = course;
+        courses.add(course);
         enrolledCourses++;
         System.out.println("Success course Added.");
         return true;
@@ -586,23 +591,18 @@ class CourseManager {
     // Method to remove a course // After removing we will have to go a string back in the array..
     public boolean removeCourse(Course course){
         // Find the course in enrolled courses
-        for(int i = 0; i <enrolledCourses; i++){
-            if(courses[i].getCourseCode().equals(course.getCourseCode())){
-                course = courses[i];
-                System.out.println("Found the book;");
-                break;
-            }
+        if(isAvailable(course)){
+            System.out.println("Found the course, ready to remove it.");
         }
-
-
-
+        courses.remove(course);
+        enrolledCourses--;
         return true;
     }
 
     // Method to update a course
     public boolean updateCourse(Course courseName, Course courseCode){
         // Check if the course exists by course code
-        if(){
+        if(isAvailable(courseName) && isAvailable(courseCode)){
 
         }
 
@@ -613,80 +613,39 @@ class CourseManager {
     public boolean searchCourseByCourseCode(Course course){
         boolean found = false;
         for (int i = 0; i < enrolledCourses; i++){
-            if(courses[i].getCourseCode().contains(course.getCourseCode())){
-                courses[i].displayInfo();
+            if(courses.get(i).getCourseCode().contains(course.getCourseCode())){
+                courses.get(i).displayInfo();
                 System.out.println("--------------------------------------");
                 found = true;
             }
         }
 
         if (!found){
-            System.out.println("Student: "+ Arrays.toString(courses) + " not found");
+            System.out.println("Course: "+ course.getCourseCode() + " not found");
         }
         return false;
     }
 
-    //Method to assign course to lecturer
-    public boolean assignCourseToLecturer(Course course){
-        // Check if the maximum number of lecturers is reached
-        if(enrolledCourses == MAX_LECTURERS){
-            System.out.println("Course slot full can't add more");
-        }
-        courses[enrolledLecturers] = course;
-        enrolledLecturers++;
-        return true;
-    }
 
     //Method to display all existing courses
     public void displayAllCourses(Course course){
         for (int i =0; i < enrolledCourses; i++){
-            courses[i].displayInfo();
+            courses.get(i).displayInfo();
         }
     }
-
-    // Method to filter a course by lecturer's name
-    public boolean searchCourseByLecturerName(Lecturer lecturer){
-        boolean found = false;
-        for (int i = 0; i < enrolledLecturers; i++){
-            if(lecturers[i].getName().contains(lecturer.getName())){
-                lecturers[i].displayInfo();
-                System.out.println("--------------------------------------");
-                found = true;
-            }
-        }
-
-        if (!found){
-            System.out.println("Lecturer: "+ Arrays.toString(lecturers) + " not found");
-        }
-        return false;
-    }
-
-    // Method to filter by lecturer's ID
-    public boolean searchCourseByLecturerCode(Lecturer lecturer){
-        boolean found = false;
-        for (int i = 0; i < enrolledLecturers; i++){
-            if(lecturers[i].getId().contains(lecturer.getId())){
-                lecturers[i].displayInfo();
-                System.out.println("--------------------------------------");
-                found = true;
-            }
-        }
-
-        if (!found){
-            System.out.println("Lecturer: "+ Arrays.toString(lecturers) + " not found");
-        }
-        return false;
-    }
-
-
-    // check if course is for which type of student
-
 
     // Method to display university course information
     public void displayInfo(){
-        System.out.println("Lecturers enrolled: " + enrolledLecturers);
         System.out.println("Enrolled courses: " + enrolledCourses);
         System.out.println("Existing courses list: " );
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
     }
 }
 
