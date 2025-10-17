@@ -183,7 +183,7 @@ class Student extends Person{
             System.out.println("Course does not exist");
             return false;
         }
-        if (course.canEnrollStudent()){ // Changed from Course.can enroll to course.can enroll meaning every course should have its own limit
+        if (course.canEnrollStudent(this)){ // Changed from Course.can enroll to course.can enroll meaning every course should have its own limit
             System.out.println("Student can be enrolled!"); // Grants the student permission to enroll....from the course....
             return true;
         }
@@ -402,7 +402,7 @@ class Lecturer extends Person{
             System.out.println("Course not available");
         }
 
-        if (course.canEnrollLecturer()){
+        if (course.canEnrollLecturer(this)){  // Passed "this" parameter since it needs to check the lecturer parameter which is actually the current class the this class.s
             System.out.println("Lecturer can enroll lecturer");
         }
         System.out.println("Lecturer can enroll lecturer");
@@ -479,9 +479,14 @@ class Course {
 
 
     //Check if it can enroll student in course
-    public boolean canEnrollStudent(){
+    public boolean canEnrollStudent(Student student){
         if(enrolledStudents.size() >= maxStudents){
             System.out.println("Course is full, can't add more students");
+            return false;
+        }
+        // Check if the student already exists
+        if(enrolledStudents.contains(student)){
+            System.out.println("Student already enrolled");
             return false;
         }
         System.out.println("Can enroll student.");
@@ -489,10 +494,13 @@ class Course {
     }
 
     //Check if it can enroll lecturer
-    public boolean canEnrollLecturer(){
+    public boolean canEnrollLecturer(Lecturer lecturer){
         if(lecturers.size() >= maxStudents){
             System.out.println("Course is full, can't add more students");
             return false;
+        }
+        if(lecturers.contains(lecturer)){
+            System.out.println("Lecturer already enrolled");
         }
         System.out.println("Can enroll Lecturer");
         return true;
