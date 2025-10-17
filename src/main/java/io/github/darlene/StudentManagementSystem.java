@@ -98,6 +98,10 @@ abstract class Person{
         return id.equals(person.id);
     }
     // CONSIDER ADDING THE HASHCODE OVERRIDE.
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     // Abstract method to be implemented by subclass
     public abstract void displayInfo();
@@ -437,7 +441,7 @@ class Lecturer extends Person{
 class Course {
     private final String courseName;
     private final String courseCode;
-    private List<Student> enrolledStudents;
+    private final List<Student> enrolledStudents;
     private List<Lecturer> lecturers; // Plural since it carries more than 1 lecturer.
     private final int maxLecturers ;
     private final int  maxStudents;
@@ -540,9 +544,9 @@ class Course {
     // Method to filter a course by lecturer's name
     public boolean searchCourseByLecturerName(Lecturer lecturer){
         boolean found = false;
-        for (int i = 0; i < lecturers.size(); i++){
-            if(lecturers.get(i).getName().contains(lecturer.getName())){
-                lecturers.get(i).displayInfo();
+        for (Lecturer value : lecturers) {
+            if (value.getName().contains(lecturer.getName())) {
+                value.displayInfo();
                 System.out.println("--------------------------------------");
                 found = true;
             }
@@ -556,9 +560,9 @@ class Course {
     // Method to filter by lecturer's ID
     public boolean searchCourseByLecturerCode(Lecturer lecturer){
         boolean found = false;
-        for (int i = 0; i < lecturers.size(); i++){
-            if(lecturers.get(i).getId().contains(lecturer.getId())){
-                lecturers.get(i).displayInfo();
+        for (Lecturer value : lecturers) {
+            if (value.getId().contains(lecturer.getId())) {
+                value.displayInfo();
                 System.out.println("--------------------------------------");
                 found = true;
             }
@@ -706,7 +710,7 @@ class University{
     private Lecturer [] lecturers;
     private int enrolledUniLecturers;
     private int enrolledUniStudents;
-    private Course courses [];
+    private Course[] courses;
 
 
     // Constructors
