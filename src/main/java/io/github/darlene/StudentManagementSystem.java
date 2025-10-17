@@ -16,7 +16,7 @@ abstract class Person{
         // this.name = name; this constructor alone will throw a null pointer exception
         //Check if name is null and empty
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Null and Empty Pointer Exception");
+            throw new IllegalArgumentException("Name cannot be null and empty");
         }
 
         // this.age = age; we also have to validate age so that no one puts a negative age, and it should all be above 18 years only.
@@ -27,7 +27,7 @@ abstract class Person{
         // this.email = email; the email input should also be validated in case of null pointers and empty spaces.
         // Check for null , spaces and if it does not contain @ and throw new IllegalArgumentException
         if(email == null || email.trim().isEmpty() || !email.contains("@")) {
-            throw new IllegalArgumentException("Null Pointer Exception");
+            throw new IllegalArgumentException("Email cannot be empty and should have the @ element.");
         }
 
         this.name = name;
@@ -97,6 +97,7 @@ abstract class Person{
         Person person = (Person) obj;
         return id.equals(person.id);
     }
+    // CONSIDER ADDING THE HASHCODE OVERRIDE.
 
     // Abstract method to be implemented by subclass
     public abstract void displayInfo();
@@ -123,7 +124,6 @@ class Student extends Person{
     private StudentType studentType;
     private int studentCourseCount;
     private final static int MAXIMUM_COURSE_ENROLLED = 5;
-    private CourseManager manager;
 
 
     // Constructors for the students class
@@ -175,6 +175,7 @@ class Student extends Person{
         this.studentType = studentType;
     }
 
+
     // Method to enroll in a course
     public boolean requestEnrollCourse(Course course){
         // Checks if the course is available using the isAvailable method in CourseManager
@@ -182,19 +183,17 @@ class Student extends Person{
             System.out.println("Course does not exist");
             return false;
         }
-        if (Course.canEnrollStudent()){
-            System.out.println("Student added successfully!");
+        if (course.canEnrollStudent()){ // Changed from Course.can enroll to course.can enroll meaning every course should have its own limit
+            System.out.println("Student can be enrolled!"); // Grants the student permission to enroll....from the course....
             return true;
         }
-        System.out.println("Student not added successfully!");
-
         return true;
     }
 
     // Method to add course
     public void addCourse(Course course){
         if(courses.size() >= MAXIMUM_COURSE_ENROLLED){
-            System.out.println("Course limit reached");
+            System.out.println("Course limit reached"); // Maximum limit of courses a student can enroll
             return;
         }
          if (courses.contains(course)){
@@ -243,7 +242,7 @@ class Student extends Person{
 }
 
 
-// At enterprice level this could later be changed to something like
+// At enterprise level this could later be changed to something like
 /*
 * class GradingPolicy {
 *   private double aMin, bMin, cMin, dMin;
@@ -341,7 +340,7 @@ enum Grade {
 class Lecturer extends Person{
     private double salary;
     private List<Course> courses;
-    private int COURSES_LIMIT = 5;
+    private static int COURSES_LIMIT = 5;
     private int courseCount;
 
 
@@ -354,7 +353,7 @@ class Lecturer extends Person{
         } else{
             this.courses = new ArrayList<>(courses);
         }
-        this.COURSES_LIMIT = COURSES_LIMIT;
+        Lecturer.COURSES_LIMIT = COURSES_LIMIT;
         this.courseCount = courseCount;
     }
 
@@ -403,7 +402,7 @@ class Lecturer extends Person{
             System.out.println("Course not available");
         }
 
-        if (Course.canEnrollLecturer()){
+        if (course.canEnrollLecturer()){
             System.out.println("Lecturer can enroll lecturer");
         }
         System.out.println("Lecturer can enroll lecturer");
@@ -411,6 +410,11 @@ class Lecturer extends Person{
         courses.add(course);
         courseCount++;
         return true;
+    }
+    // Method to set the desired salary
+    public String desiredSalary(){
+
+        return "";
     }
 
     // Method to display all info...Overrides the person abstract
@@ -427,33 +431,31 @@ class Lecturer extends Person{
 // This class own the teaches who teaches the various courses..
 // This class has students list so that we can know the maximum that shouldn't exceed a course.
 class Course {
-    private String courseName;
-    private String courseCode;
+    private final String courseName;
+    private final String courseCode;
     private List<Student> enrolledStudents;
     private List<Lecturer> lecturers; // Plural since it carries more than 1 lecturer.
-    private static int studentCount;
-    private static int lecturerCount;
-    private static final int MAX_LECTURER_PER_COURSE = 5;
-    private static final int  MAX_STUDENTS = 200;
+    private final int maxLecturers ;
+    private final int  maxStudents;
     // private int courseCount;   Removing this because it does not make sense inside one course object.
 
 
     // Constructors
-    public Course(List<Student> enrolledStudents, int studentCount, String courseName, String courseCode, List<Lecturer> lecturer, int lecturerCount ){
+    public Course(List<Student> enrolledStudents, String courseName, String courseCode, List<Lecturer> lecturer, int maxLecturers, int maxStudents){
         if (enrolledStudents == null){
             this.enrolledStudents = new ArrayList<>();
         } else{
             this.enrolledStudents = new ArrayList<>(enrolledStudents);
         }
-        Course.studentCount = 0;
         this.courseName = courseName;
         this.courseCode = courseCode;
+        this.maxStudents = maxStudents;
+        this.maxLecturers = maxLecturers;
         if (lecturer == null){
             this.lecturers = new ArrayList<>();
         } else {
             this.lecturers = new ArrayList<>(lecturer);
         }
-        Course.lecturerCount = 0;
     }
 
     // Getters
@@ -477,8 +479,8 @@ class Course {
 
 
     //Check if it can enroll student in course
-    public static boolean canEnrollStudent(){
-        if(studentCount == MAX_STUDENTS){
+    public boolean canEnrollStudent(){
+        if(enrolledStudents.size() >= maxStudents){
             System.out.println("Course is full, can't add more students");
             return false;
         }
@@ -487,8 +489,8 @@ class Course {
     }
 
     //Check if it can enroll lecturer
-    public static boolean canEnrollLecturer(){
-        if(lecturerCount == MAX_LECTURER_PER_COURSE){
+    public boolean canEnrollLecturer(){
+        if(lecturers.size() >= maxStudents){
             System.out.println("Course is full, can't add more students");
             return false;
         }
@@ -499,7 +501,7 @@ class Course {
     // Method to filter a course by lecturer's name
     public boolean searchCourseByLecturerName(Lecturer lecturer){
         boolean found = false;
-        for (int i = 0; i < lecturerCount; i++){
+        for (int i = 0; i < lecturers.size(); i++){
             if(lecturers.get(i).getName().contains(lecturer.getName())){
                 lecturers.get(i).displayInfo();
                 System.out.println("--------------------------------------");
@@ -515,7 +517,7 @@ class Course {
     // Method to filter by lecturer's ID
     public boolean searchCourseByLecturerCode(Lecturer lecturer){
         boolean found = false;
-        for (int i = 0; i < lecturerCount; i++){
+        for (int i = 0; i < lecturers.size(); i++){
             if(lecturers.get(i).getId().contains(lecturer.getId())){
                 lecturers.get(i).displayInfo();
                 System.out.println("--------------------------------------");
@@ -535,7 +537,7 @@ class Course {
         System.out.println("===================" +  ("Get the Course Statistics") + "===================================");
         System.out.println("Course Name: " + getCourseName());
         System.out.println("Course Code: " + getCourseCode());
-        System.out.println("Number of students enrolled: " + studentCount);
+        System.out.println("Number of students enrolled: " + enrolledStudents.size());
 
     }
 }
@@ -556,7 +558,15 @@ class CourseManager {
     public CourseManager (int enrolledCourses, boolean isAvailable){
         CourseManager.enrolledCourses = 0;
         this.isAvailable = false;
+    }
 
+    // Getters and Setters
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
     }
 
     // Check if the course is available
@@ -603,8 +613,11 @@ class CourseManager {
     public boolean updateCourse(Course courseName, Course courseCode){
         // Check if the course exists by course code
         if(isAvailable(courseName) && isAvailable(courseCode)){
-
+            System.out.println("Course is available you can update it");
+            return true;
         }
+
+
 
         return false;
     }
@@ -638,14 +651,6 @@ class CourseManager {
     public void displayInfo(){
         System.out.println("Enrolled courses: " + enrolledCourses);
         System.out.println("Existing courses list: " );
-    }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public void setAvailable(boolean available) {
-        isAvailable = available;
     }
 }
 
