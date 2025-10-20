@@ -1,11 +1,11 @@
 ### METHOD OVERRIDING
 - Doing this project I learnt about (Overring) methods in java. 
-- Overriding that is written as "@Overrding" is one of the key concepts of OOP in java.
+- Overriding that is written as "@Overriding" is one of the key concepts of OOP in java.
 - It covers the whole aspect of inheritance. 
-- When a child class inherits a method from the parent class and it has to implement or extend new parameters then the method has to be overridden.
+- When a child class inherits a method from the parent class, and it has to implement or extend new parameters then the method has to be overridden.
 - I guess you'd be asking yourself by now why??
 
-> Method Overriding allows the child class to have its own features different from the parents without overrding the parent method then the child class won't be able to implement its own features.
+> Method Overriding allows the child class to have its own features different from the parents without overriding the parent method then the child class won't be able to implement its own features.
 > 
 > Additionally, we can also override Java built in methods like .equals() .hashCode() amongst others.
 > 
