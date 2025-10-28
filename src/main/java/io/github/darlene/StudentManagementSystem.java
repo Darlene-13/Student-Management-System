@@ -128,6 +128,7 @@ class Student extends Person{
     private StudentType studentType;
     private int studentCourseCount;
     private final static int MAXIMUM_COURSE_ENROLLED = 5;
+    private Map<Course, Double> courseGrades = new HashMap<>(); // HashMap to store course and corresponding grade
 
 
     // Constructors for the students class
@@ -226,14 +227,34 @@ class Student extends Person{
     }
 
     // Method to add grade after lecturer assigns
-    public void addGrade(){
+    public void addGrade(Course course, double grade){
+        if (!courses.contains(course)){
+            System.out.println("You are not enrolled in this course");
+            return;
+        }
+
+        if( grade  < 0 || grade > 100){
+            System.out.println("Invalid grade. Grade should be between 0 and 100");
+            return;
+        }
+        courseGrades.put(course, grade);
+        System.out.println("Grade added successfully for course: " + course.getCourseName());
 
     }
     // Method to calculate GPA
-    public String calculateGPA(){
+    public int calculateGPA(){
+        if (courseGrades.isEmpty()){
+            System.out.println("No grades available to calculate GPA");
+            return 0;
+        }
 
+        int totalPoints = 0;
+        int courseCount = 0;
 
-        return "";
+        for (double grade: courseGrades.values()){
+            // Grade g = courseGrades.get
+        }
+        return 0;
     }
 
     @Override
